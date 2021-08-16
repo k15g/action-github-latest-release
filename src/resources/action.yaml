@@ -1,0 +1,22 @@
+name: Fetch latest release
+description: ...
+author: Erlend Klakegg Bergheim
+
+inputs:
+  token:
+    description: GitHub token or PAT
+    required: true
+  owner:
+    description: Repository owner
+    required: true
+  repo:
+    description: Repository identifier
+    required: true
+
+branding:
+  color: green
+  icon: download
+
+runs:
+  using: node12
+  main: index.js
