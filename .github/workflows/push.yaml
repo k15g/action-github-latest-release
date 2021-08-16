@@ -17,8 +17,10 @@ jobs:
     - name: Build
       run: make build
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
       with:
-        path: dist
-        retention-days: 3
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        publish_branch: edge
+        enable_jekyll: true
