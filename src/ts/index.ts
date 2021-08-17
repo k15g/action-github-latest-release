@@ -11,7 +11,13 @@ async function run() {
     var repo = core.getInput('repo', {required: true})
 
     // Fetch latest release
-    const release = await octokit.rest.repos.getLatestRelease({owner, repo})
+    var release
+    try {
+        release = await octokit.rest.repos.getLatestRelease({owner, repo})
+    } catch (e) {
+        core.setFailed(`Received ${e.status} during lookup.`)
+        return
+    }
 
     // Write values of type number, boolean and string to outoput
     Object.entries(release.data).forEach(entry => {
