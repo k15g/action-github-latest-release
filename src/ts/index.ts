@@ -12,6 +12,7 @@ async function run() {
 
     // Fetch latest release
     var release
+
     try {
         release = await octokit.rest.repos.getLatestRelease({owner, repo})
     } catch (e) {
@@ -24,6 +25,10 @@ async function run() {
         if (['number', 'boolean', 'string'].indexOf(typeof entry[1]) >= 0)
             core.setOutput(entry[0], entry[1])
     })
+
+    // Add version identifier if `tag_name` starts with "v"
+    if (/^v[0-9]/.test(release.data.tag_name))
+        core.setOutput('version', release.data.tag_name.substr(1))
 }
 
 run()
