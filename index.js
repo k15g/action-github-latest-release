@@ -7,7 +7,14 @@ async function run() {
     var octokit = github.getOctokit(token);
     var owner = core.getInput('owner', { required: true });
     var repo = core.getInput('repo', { required: true });
-    const release = await octokit.rest.repos.getLatestRelease({ owner, repo });
+    var release;
+    try {
+        release = await octokit.rest.repos.getLatestRelease({ owner, repo });
+    }
+    catch (e) {
+        core.setFailed(`Received ${e.status} during lookup.`);
+        return;
+    }
     Object.entries(release.data).forEach(entry => {
         if (['number', 'boolean', 'string'].indexOf(typeof entry[1]) >= 0)
             core.setOutput(entry[0], entry[1]);
