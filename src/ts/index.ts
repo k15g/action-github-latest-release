@@ -26,8 +26,8 @@ async function run() {
             core.setOutput(entry[0], entry[1])
     })
 
-    // Add version identifier if `tag_name` starts with "v"
-    if (/^v[0-9]/.test(release.data.tag_name))
+    // Add version identifier if `tag_name` starts with "v" and a digit
+    if (/^[vV]\d/.test(release.data.tag_name))
         core.setOutput('version', release.data.tag_name.substr(1))
 }
 
