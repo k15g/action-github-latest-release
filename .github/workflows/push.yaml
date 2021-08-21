@@ -1,6 +1,13 @@
 name: Build action
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types:
+      - released
 
 jobs:
   build:
@@ -17,10 +24,38 @@ jobs:
     - name: Build
       run: make build
 
+    - name: Detect channel and version
+      uses: actions/github-script@v4
+      with:
+        script: |
+          var channel = context.ref.startsWith('refs/tags/v') ? context.ref.replace('refs/tags/', '').replace(/\.\d+/g, '') : 'edge';
+          var version = context.ref.startsWith('refs/tags/v') ? context.ref.replace('refs/tags/v', '') : 'dev';
+          core.exportVariable('CHANNEL', channel);
+          core.exportVariable('VERSION', version);
+
+    - name: Package distribution
+      run: cd dist && tar -cf ../${{ github.event.repository.name }}-${{ env.VERSION }}.tar * && gzip -9 ../${{ github.event.repository.name }}-${{ env.VERSION }}.tar
+
+    - name: Upload distribution (artifact)
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ github.event.repository.name }}-${{ env.VERSION }}
+        path: ${{ github.event.repository.name }}-${{ env.VERSION }}.tar.gz
+        retention-days: 3
+
+    - name: Upload distribution (release)
+      uses: klakegg/github-upload@v0.9.1
+      if: startsWith(github.ref, 'refs/tags/v')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        file: ${{ github.event.repository.name }}-${{ env.VERSION }}.tar.gz
+        label: Distribution for GitHub Actions
+
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
-        publish_branch: edge
+        publish_branch: ${{ env.CHANNEL }}
         enable_jekyll: true
