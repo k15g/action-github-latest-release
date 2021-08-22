@@ -6,8 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   release:
-    types:
-      - released
+    types: [ released ]
 
 jobs:
   build:
@@ -24,23 +23,22 @@ jobs:
     - name: Build
       run: make build
 
-    - name: Detect channel and version
-      uses: actions/github-script@v4
+    - name: Prepare version labels
+      uses: k15g/action-version-labels@edge
       with:
-        script: |
-          var channel = context.ref.startsWith('refs/tags/v') ? context.ref.replace('refs/tags/', '').replace(/\.\d+/g, '') : 'edge';
-          var version = context.ref.startsWith('refs/tags/v') ? context.ref.replace('refs/tags/v', '') : 'dev';
-          core.exportVariable('CHANNEL', channel);
-          core.exportVariable('VERSION', version);
+        prefix: project
+
+    - name: Copy readme
+      run: cat README.md | sed "s:@edge:@${{ env.PROJECT_CHANNEL }}:g" > dist/README.md
 
     - name: Package distribution
-      run: cd dist && tar -cf ../${{ github.event.repository.name }}-${{ env.VERSION }}.tar * && gzip -9 ../${{ github.event.repository.name }}-${{ env.VERSION }}.tar
+      run: cd dist && tar -czf ../${{ github.event.repository.name }}-${{ env.PROJECT_VERSION }}.tar.gz *
 
     - name: Upload distribution (artifact)
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ github.event.repository.name }}-${{ env.VERSION }}
-        path: ${{ github.event.repository.name }}-${{ env.VERSION }}.tar.gz
+        name: ${{ github.event.repository.name }}-${{ env.PROJECT_VERSION }}
+        path: ${{ github.event.repository.name }}-${{ env.PROJECT_VERSION }}.tar.gz
         retention-days: 3
 
     - name: Upload distribution (release)
@@ -49,7 +47,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        file: ${{ github.event.repository.name }}-${{ env.VERSION }}.tar.gz
+        file: ${{ github.event.repository.name }}-${{ env.PROJECT_VERSION }}.tar.gz
         label: Distribution for GitHub Actions
 
     - name: Deploy
@@ -57,5 +55,5 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
-        publish_branch: ${{ env.CHANNEL }}
+        publish_branch: ${{ env.PROJECT_CHANNEL }}
         enable_jekyll: true
