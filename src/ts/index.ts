@@ -24,6 +24,8 @@ async function run() {
     Object.entries(release.data).forEach(entry => {
         if (['number', 'boolean', 'string'].indexOf(typeof entry[1]) >= 0)
             core.setOutput(entry[0], entry[1])
+        else
+            core.setOutput(entry[0], JSON.stringify(entry[1]))
     })
 
     // Add version identifier if `tag_name` starts with "v" and a digit
