@@ -9,12 +9,16 @@ async function run() {
     // Fetch owner and repo
     var owner = core.getInput('owner', {required: true})
     var repo = core.getInput('repo', {required: true})
+    var tag = core.getInput('tag')
 
     // Fetch latest release
     var release
 
     try {
-        release = await octokit.rest.repos.getLatestRelease({owner, repo})
+        if (tag != "")
+            release = await (await octokit.rest.repos.getLatestRelease({owner, repo}))
+        else
+            release = await (await octokit.rest.repos.getReleaseByTag({owner, repo, tag}))
     } catch (e) {
         core.setFailed(`Received ${e.status} during lookup.`)
         return
