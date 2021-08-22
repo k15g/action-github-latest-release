@@ -18,6 +18,8 @@ async function run() {
     Object.entries(release.data).forEach(entry => {
         if (['number', 'boolean', 'string'].indexOf(typeof entry[1]) >= 0)
             core.setOutput(entry[0], entry[1]);
+        else
+            core.setOutput(entry[0], JSON.stringify(entry[1]));
     });
     if (/^[vV]\d/.test(release.data.tag_name))
         core.setOutput('version', release.data.tag_name.substr(1));
