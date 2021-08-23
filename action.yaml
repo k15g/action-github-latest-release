@@ -5,13 +5,16 @@ author: Erlend Klakegg Bergheim
 inputs:
   token:
     description: GitHub token or PAT
-    required: true
+    required: false
   owner:
     description: Repository owner
     required: true
   repo:
     description: Repository identifier
     required: true
+  tag:
+    description: Tag identifier
+    required: false
 
 branding:
   color: green
