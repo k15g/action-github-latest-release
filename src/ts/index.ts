@@ -15,12 +15,12 @@ async function run() {
     var release
 
     try {
-        if (tag != "")
-            release = await (await octokit.rest.repos.getLatestRelease({owner, repo}))
+        if (tag == "")
+            release = await octokit.rest.repos.getLatestRelease({owner, repo})
         else
-            release = await (await octokit.rest.repos.getReleaseByTag({owner, repo, tag}))
+            release = await octokit.rest.repos.getReleaseByTag({owner, repo, tag})
     } catch (e) {
-        core.setFailed(`Received ${e.status} during lookup.`)
+        core.setFailed(`Received ${e.status} during lookup of ${e.response.url}.`)
         return
     }
 
