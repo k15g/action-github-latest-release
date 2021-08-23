@@ -5,7 +5,7 @@ author: Erlend Klakegg Bergheim
 inputs:
   token:
     description: GitHub token or PAT
-    required: true
+    required: false
   owner:
     description: Repository owner
     required: true

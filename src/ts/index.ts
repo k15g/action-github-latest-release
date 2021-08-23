@@ -3,7 +3,7 @@ import * as github from '@actions/github'
 
 async function run() {
     // Fetch token and create client
-    var token = core.getInput('token', {required: true})
+    var token = core.getInput('token')
     var octokit = github.getOctokit(token)
 
     // Fetch owner and repo

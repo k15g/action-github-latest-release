@@ -5,7 +5,6 @@
   id: release
   uses: k15g/action-github-release-info@edge
   with:
-    token: ${{ secrets.SUPER_GITHUB_TOKEN }}
     owner: k15g
     repo: action-github-release-info
 ```
@@ -15,6 +14,17 @@
 
 
 ### `token`
+
+```yaml
+- name: Fetch release info
+  id: release
+  uses: k15g/action-github-release-info@edge
+  with:
+    token: ${{ secrets.SUPER_GITHUB_TOKEN }}
+    owner: k15g
+    repo: action-github-release-info
+```
+
 
 ### `owner`
 
@@ -28,7 +38,6 @@
   id: release
   uses: k15g/action-github-release-info@edge
   with:
-    token: ${{ secrets.SUPER_GITHUB_TOKEN }}
     owner: k15g
     repo: action-github-release-info
     tag: v1.0.0
