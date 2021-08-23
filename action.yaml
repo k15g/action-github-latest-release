@@ -12,6 +12,9 @@ inputs:
   repo:
     description: Repository identifier
     required: true
+  tag:
+    description: Tag identifier
+    required: false
 
 branding:
   color: green
