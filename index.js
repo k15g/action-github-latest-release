@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = require("@actions/core");
 const github = require("@actions/github");
 async function run() {
-    var token = core.getInput('token', { required: true });
+    var token = core.getInput('token');
     var octokit = github.getOctokit(token);
     var owner = core.getInput('owner', { required: true });
     var repo = core.getInput('repo', { required: true });
