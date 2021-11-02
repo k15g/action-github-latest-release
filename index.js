@@ -2,11 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = require("@actions/core");
 const github = require("@actions/github");
+const repo_matcher = new RegExp('^(.+)\/(.+)$');
 async function run() {
-    var token = core.getInput('token');
+    var token = core.getInput('token', { required: true });
     var octokit = github.getOctokit(token);
-    var owner = core.getInput('owner', { required: true });
     var repo = core.getInput('repo', { required: true });
+    var owner;
+    if (repo.match(repo_matcher)) {
+        [, owner, repo] = repo.match(repo_matcher);
+    }
+    else {
+        owner = core.getInput('owner', { required: true });
+    }
     var tag = core.getInput('tag');
     var release;
     try {
